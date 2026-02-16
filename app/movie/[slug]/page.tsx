@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/server';
 
 interface Props {
     params: Promise<{ slug: string }>;
-    searchParams: Promise<{ ep?: string }>;
+    searchParams: Promise<{ ep?: string; sv?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -37,28 +37,46 @@ export default async function WatchPage({ params, searchParams }: Props) {
 
     // 2. Logic lấy phim (giữ nguyên code cũ của bạn)
     const { slug } = await params;
-    const { ep } = await searchParams;
+    const { ep, sv } = await searchParams; // Lấy thêm tham số sv (server index)
     const data = await getMovieBySlug(slug);
 
     const { movie, episodes } = data;
 
     // Find the current episode's m3u8 link;
+    // selectedEpSlug: ưu tiên lấy từ URL, nếu không có thì lấy tập đầu tiên của server đầu tiên
     const selectedEpSlug = ep || episodes?.[0]?.server_data?.[0]?.slug || '';
+
+    // serverIndex: ưu tiên lấy từ URL, mặc định là 0
+    const serverIndex = Number(sv) || 0;
+
     let currentLink = '';
     let currentEpName = '';
 
-    for (const server of episodes) {
-        for (const epData of server.server_data) {
-            if (epData.slug === selectedEpSlug || (!ep && server.server_data.indexOf(epData) === 0)) {
-                currentLink = epData.link_m3u8;
-                currentEpName = epData.name;
-                break;
+    // Logic mới: Chọn đúng server và tập phim
+    if (episodes?.length > 0) {
+        // Lấy server theo index (nếu index hợp lệ)
+        const selectedServer = episodes[serverIndex] || episodes[0];
+
+        // Tìm tập phim trong server đã chọn
+        const foundEpisode = selectedServer.server_data.find(e => e.slug === selectedEpSlug);
+
+        if (foundEpisode) {
+            currentLink = foundEpisode.link_m3u8;
+            currentEpName = foundEpisode.name;
+        } else {
+            // Fallback: nếu không thấy tập trong server đó, tìm trong tất cả server
+            for (const server of episodes) {
+                const e = server.server_data.find(ev => ev.slug === selectedEpSlug);
+                if (e) {
+                    currentLink = e.link_m3u8;
+                    currentEpName = e.name;
+                    break;
+                }
             }
         }
-        if (currentLink) break;
     }
 
-    // Fallback to first episode
+    // Fallback cuối cùng: Tập đầu tiên của server đầu tiên
     if (!currentLink && episodes?.[0]?.server_data?.[0]) {
         currentLink = episodes[0].server_data[0].link_m3u8;
         currentEpName = episodes[0].server_data[0].name;

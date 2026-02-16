@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { searchMovies } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
+import CatalogFilter from '@/components/CatalogFilter';
 import { Search } from 'lucide-react';
 import type { MovieListResponse } from '@/lib/types';
 

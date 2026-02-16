@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { getTvShows } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
+import CatalogFilter from '@/components/CatalogFilter';
 import { Tv } from 'lucide-react';
 import type { MovieListResponse } from '@/lib/types';
 
@@ -39,6 +40,8 @@ export default async function TvShowsPage({ searchParams }: TvShowsPageProps) {
                     </h1>
                     <p className="text-zinc-400 mt-2">Khám phá bộ sưu tập TV Shows đặc sắc</p>
                 </div>
+
+                <CatalogFilter />
 
                 {error ? (
                     <div className="glass rounded-2xl p-12 text-center">

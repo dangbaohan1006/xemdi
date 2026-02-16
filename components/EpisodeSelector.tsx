@@ -23,7 +23,7 @@ export default function EpisodeSelector({ episodes, currentSlug, movieSlug }: Ep
                             return (
                                 <Link
                                     key={ep.slug}
-                                    href={`/movie/${movieSlug}?ep=${ep.slug}`}
+                                    href={`/movie/${movieSlug}?ep=${ep.slug}&sv=${serverIdx}`}
                                     className={`
                     px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
                     ${isActive

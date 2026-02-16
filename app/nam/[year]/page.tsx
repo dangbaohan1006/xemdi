@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { getMoviesByYear } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
+import CatalogFilter from '@/components/CatalogFilter';
 import { Calendar } from 'lucide-react';
 import type { MovieListResponse } from '@/lib/types';
 
@@ -42,6 +43,8 @@ export default async function YearPage({ params, searchParams }: YearPageProps) 
                     </h1>
                     <p className="text-zinc-400 mt-2">Bộ sưu tập phim ra mắt năm {year}</p>
                 </div>
+
+                <CatalogFilter />
 
                 {error ? (
                     <div className="glass rounded-2xl p-12 text-center">

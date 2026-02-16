@@ -33,7 +33,6 @@ export default function Navbar() {
     };
 
     const mainLinks = [
-        { name: 'Duyệt Tìm', href: '/duyet-tim' },
         { name: 'Phim Bộ', href: '/phim-bo' },
         { name: 'Phim Lẻ', href: '/phim-le' },
         { name: 'TV Shows', href: '/tv-shows' },

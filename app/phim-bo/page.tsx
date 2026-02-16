@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Tv, Sparkles } from 'lucide-react';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
+import CatalogFilter from '@/components/CatalogFilter';
 import { MovieListResponse } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -56,6 +57,8 @@ export default async function PhimBoPage({ searchParams }: Props) {
                     </h1>
                     <p className="text-zinc-400 mt-2">Khám phá phim bộ dài tập</p>
                 </div>
+
+                <CatalogFilter />
 
                 {movies.length === 0 ? (
                     <div className="text-center py-20">

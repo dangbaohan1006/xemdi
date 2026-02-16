@@ -4,6 +4,7 @@ export const runtime = 'nodejs';
 import { getAnimeList } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
+import CatalogFilter from '@/components/CatalogFilter';
 import { Sparkles } from 'lucide-react';
 import type { MovieListResponse } from '@/lib/types';
 
@@ -40,6 +41,8 @@ export default async function AnimePage({ searchParams }: AnimePageProps) {
                     </h1>
                     <p className="text-zinc-400 mt-2">Bộ sưu tập anime đặc sắc</p>
                 </div>
+
+                <CatalogFilter />
 
                 {error ? (
                     <div className="glass rounded-2xl p-8 text-center">

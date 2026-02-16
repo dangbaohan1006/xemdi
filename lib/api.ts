@@ -228,14 +228,19 @@ export const GENRES = [
 ];
 
 export const COUNTRIES = [
-    { name: 'Âu Mỹ', slug: 'au-my' },
-    { name: 'Hàn Quốc', slug: 'han-quoc' },
     { name: 'Trung Quốc', slug: 'trung-quoc' },
+    { name: 'Hàn Quốc', slug: 'han-quoc' },
     { name: 'Nhật Bản', slug: 'nhat-ban' },
     { name: 'Thái Lan', slug: 'thai-lan' },
+    { name: 'Âu Mỹ', slug: 'au-my' },
     { name: 'Việt Nam', slug: 'viet-nam' },
+    { name: 'Hồng Kông', slug: 'hong-kong' },
+    { name: 'Đài Loan', slug: 'dai-loan' },
     { name: 'Ấn Độ', slug: 'an-do' },
     { name: 'Anh', slug: 'anh' },
+    { name: 'Pháp', slug: 'phap' },
+    { name: 'Canada', slug: 'canada' },
+    { name: 'Quốc Gia Khác', slug: 'quoc-gia-khac' },
 ];
 
 export const YEARS = Array.from(

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Film, Sparkles } from 'lucide-react';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
+import CatalogFilter from '@/components/CatalogFilter';
 import { GENRES } from '@/lib/api';
 import { MovieListResponse } from '@/lib/types';
 
@@ -64,6 +65,8 @@ export default async function GenrePage({ params, searchParams }: Props) {
                     </h1>
                     <p className="text-zinc-400 mt-2">Khám phá phim {genreName.toLowerCase()}</p>
                 </div>
+
+                <CatalogFilter />
 
                 {movies.length === 0 ? (
                     <div className="text-center py-20">

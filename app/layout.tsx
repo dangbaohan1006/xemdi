@@ -1,38 +1,40 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Navbar from "@/components/Navbar";
-import { createClient } from "@/lib/supabase/server"; // File server.ts bạn đã tạo
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import Navbar from '@/components/Navbar';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ['latin', 'vietnamese'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: "NotFlix - Xem phim miễn phí",
-  description: "Web xem phim cá nhân không quảng cáo",
+  title: 'XemĐi — Xem Phim Online Miễn Phí',
+  description: 'Xem phim online chất lượng cao, miễn phí, không quảng cáo. Phim mới cập nhật hàng ngày.',
+  keywords: 'xem phim, phim online, phim miễn phí, phim HD',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  // 1. Logic Auth (Thay thế Middleware)
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  // Lấy đường dẫn hiện tại để biết có phải trang login không
-  const headersList = headers();
-  // Lưu ý: headers().get("x-url") cần config thêm, nên ta dùng cách đơn giản hơn:
-  // Chỉ redirect nếu user chưa login VÀ đang cố vào xem phim
-  // (Logic này nên đặt cụ thể ở page.tsx của trang phim thì tốt hơn, nhưng đặt tạm đây cũng được)
-
+}) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="vi" className="dark">
+      <body className={`${inter.className} bg-zinc-950 text-zinc-50 antialiased`}>
         <Navbar />
-        {children}
+        <main className="min-h-screen pt-16">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-zinc-800/50 py-8 mt-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-sm text-zinc-600">
+              © 2026 XemĐi — Dự án cá nhân. Dữ liệu phim từ KKPhim API.
+            </p>
+          </div>
+        </footer>
       </body>
     </html>
   );

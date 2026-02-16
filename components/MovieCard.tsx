@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Movie } from '@/lib/types';
+import { MovieSummary } from '@/lib/types';
 
 interface MovieCardProps {
-    movie: Movie;
+    movie: MovieSummary;
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {

@@ -40,30 +40,24 @@ export interface Episode {
   }>;
 }
 
+export interface MovieSummary {
+  _id: string;
+  name: string;
+  slug: string;
+  origin_name: string;
+  poster_url: string;
+  thumb_url: string;
+  year: number;
+}
+
 export interface APIResponse {
   status: boolean;
-  items: Array<{
-    _id: string;
-    name: string;
-    slug: string;
-    origin_name: string;
-    poster_url: string;
-    thumb_url: string;
-    year: number;
-  }>;
+  items: MovieSummary[];
 }
 
 export interface LatestMoviesResponse {
   status: boolean;
-  items: Array<{
-    _id: string;
-    name: string;
-    slug: string;
-    origin_name: string;
-    poster_url: string;
-    thumb_url: string;
-    year: number;
-  }>;
+  items: MovieSummary[];
 }
 
 export interface MovieDetailResponse {

@@ -48,6 +48,7 @@ export interface MovieSummary {
   poster_url: string;
   thumb_url: string;
   year: number;
+  source?: 'kkphim' | 'nguonc'; // Optional: track data source
 }
 
 export interface APIResponse {
@@ -64,6 +65,17 @@ export interface MovieDetailResponse {
   status: boolean;
   movie: Movie;
   episodes: Episode[];
+}
+
+// NguonC API types
+export interface AnimeListResponse {
+  status: string; // 'success' or 'error'
+  items: any[]; // Will be normalized to MovieSummary[]
+  pagination?: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+  };
 }
 
 // Supabase types

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import SearchInput from './SearchInput';
 import type { User } from '@supabase/supabase-js';
 const supabase = createClient();
 
@@ -42,8 +43,25 @@ export default function Navbar() {
                         </span>
                     </Link>
 
+                    {/* Navigation Links */}
+                    <div className="hidden md:flex items-center gap-6 ml-8">
+                        <Link href="/" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
+                            Trang Chủ
+                        </Link>
+                        <Link href="/danh-sach/phim-bo" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
+                            Phim Bộ
+                        </Link>
+                        <Link href="/danh-sach/phim-le" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
+                            Phim Lẻ
+                        </Link>
+                        <Link href="/anime" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
+                            Anime
+                        </Link>
+                    </div>
+
                     {/* Right Side */}
                     <div className="flex items-center gap-4">
+                        <SearchInput />
                         {user ? (
                             <div className="relative">
                                 <button

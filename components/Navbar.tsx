@@ -33,12 +33,10 @@ export default function Navbar() {
     };
 
     const mainLinks = [
-        { name: 'Duyệt Tìm', href: '/search' },
         { name: 'Phim Bộ', href: '/phim-bo' },
         { name: 'Phim Lẻ', href: '/phim-le' },
         { name: 'TV Shows', href: '/tv-shows' },
-        { name: 'Hoạt Hình', href: '/anime' },
-        { name: 'Chiếu Rạp', href: '/chieu-rap' },
+        { name: 'Anime', href: '/anime' },
     ];
 
     const isActive = (href: string) => pathname === href;

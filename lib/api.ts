@@ -90,7 +90,7 @@ function normalizeNguonCMovie(nguoncMovie: any): MovieSummary {
 
 export async function getAnimeList(page: number = 1): Promise<MovieListResponse> {
     try {
-        const res = await fetch(`${NGUONC_URL}/films/the-loai/hoat-hinh?page=${page}`, {
+        const res = await fetch(`${BASE_URL}/v1/api/danh-sach/hoat-hinh?page=${page}&limit=10`, {
             next: { revalidate: 300 },
         });
 
@@ -99,15 +99,16 @@ export async function getAnimeList(page: number = 1): Promise<MovieListResponse>
             return { status: false, items: [] };
         }
 
-        const data: AnimeListResponse = await res.json();
+        const data = await res.json();
+        const paginationData = data?.params?.pagination;
 
         return {
-            status: data.status === 'success',
-            items: (data.items || []).map(normalizeNguonCMovie),
-            pagination: data.pagination ? {
-                currentPage: data.pagination.currentPage || page,
-                totalPages: data.pagination.totalPages || 1,
-                totalItems: data.pagination.totalItems || 0,
+            status: data.status || false,
+            items: data.items || [],
+            pagination: paginationData ? {
+                currentPage: paginationData.currentPage || page,
+                totalPages: paginationData.totalPages || 1,
+                totalItems: paginationData.totalItems || 0,
                 totalItemsPerPage: 10
             } : undefined
         };
@@ -208,36 +209,36 @@ export async function getMoviesByYear(year: number, page: number = 1): Promise<M
 }
 
 export const GENRES = [
-    { name: 'Hanh Dong', slug: 'hanh-dong' },
-    { name: 'Tinh Cam', slug: 'tinh-cam' },
-    { name: 'Hai Huoc', slug: 'hai-huoc' },
-    { name: 'Co Trang', slug: 'co-trang' },
-    { name: 'Tam Ly', slug: 'tam-ly' },
-    { name: 'Hinh Su', slug: 'hinh-su' },
-    { name: 'Chien Tranh', slug: 'chien-tranh' },
-    { name: 'The Thao', slug: 'the-thao' },
-    { name: 'Vo Thuat', slug: 'vo-thuat' },
-    { name: 'Vien Tuong', slug: 'vien-tuong' },
-    { name: 'Phieu Luu', slug: 'phieu-luu' },
-    { name: 'Khoa Hoc', slug: 'khoa-hoc' },
-    { name: 'Kinh Di', slug: 'kinh-di' },
-    { name: 'Am Nhac', slug: 'am-nhac' },
-    { name: 'Gia Dinh', slug: 'gia-dinh' },
-    { name: 'Hoc Duong', slug: 'hoc-duong' },
+    { name: 'Hành Động', slug: 'hanh-dong' },
+    { name: 'Tình Cảm', slug: 'tinh-cam' },
+    { name: 'Hài Hước', slug: 'hai-huoc' },
+    { name: 'Cổ Trang', slug: 'co-trang' },
+    { name: 'Tâm Lý', slug: 'tam-ly' },
+    { name: 'Hình Sự', slug: 'hinh-su' },
+    { name: 'Chiến Tranh', slug: 'chien-tranh' },
+    { name: 'Thể Thao', slug: 'the-thao' },
+    { name: 'Võ Thuật', slug: 'vo-thuat' },
+    { name: 'Viễn Tưởng', slug: 'vien-tuong' },
+    { name: 'Phiêu Lưu', slug: 'phieu-luu' },
+    { name: 'Khoa Học', slug: 'khoa-hoc' },
+    { name: 'Kinh Dị', slug: 'kinh-di' },
+    { name: 'Âm Nhạc', slug: 'am-nhac' },
+    { name: 'Gia Đình', slug: 'gia-dinh' },
+    { name: 'Học Đường', slug: 'hoc-duong' },
 ];
 
 export const COUNTRIES = [
-    { name: 'Au My', slug: 'au-my' },
-    { name: 'Han Quoc', slug: 'han-quoc' },
-    { name: 'Trung Quoc', slug: 'trung-quoc' },
-    { name: 'Nhat Ban', slug: 'nhat-ban' },
-    { name: 'Thai Lan', slug: 'thai-lan' },
-    { name: 'Viet Nam', slug: 'viet-nam' },
-    { name: 'An Do', slug: 'an-do' },
+    { name: 'Âu Mỹ', slug: 'au-my' },
+    { name: 'Hàn Quốc', slug: 'han-quoc' },
+    { name: 'Trung Quốc', slug: 'trung-quoc' },
+    { name: 'Nhật Bản', slug: 'nhat-ban' },
+    { name: 'Thái Lan', slug: 'thai-lan' },
+    { name: 'Việt Nam', slug: 'viet-nam' },
+    { name: 'Ấn Độ', slug: 'an-do' },
     { name: 'Anh', slug: 'anh' },
 ];
 
 export const YEARS = Array.from(
-    { length: new Date().getFullYear() - 2009 },
+    { length: new Date().getFullYear() - 1989 },
     (_, i) => new Date().getFullYear() - i
 );

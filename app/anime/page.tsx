@@ -33,14 +33,12 @@ export default async function AnimePage({ searchParams }: AnimePageProps) {
     return (
         <div className="hero-gradient min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="mb-12 animate-fade-in">
-                    <h1 className="text-4xl sm:text-5xl font-black tracking-tight flex items-center gap-3">
-                        <Sparkles className="w-10 h-10 text-purple-500" />
+                <div className="mb-8 animate-fade-in">
+                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+                        <Sparkles className="w-8 h-8 text-red-500" />
                         <span className="gradient-text">Anime</span>
                     </h1>
-                    <p className="text-zinc-400 mt-3 text-lg">
-                        Phim hoạt hình Nhật Bản mới nhất
-                    </p>
+                    <p className="text-zinc-400 mt-2">Bộ sưu tập anime đặc sắc</p>
                 </div>
 
                 {error ? (

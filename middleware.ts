@@ -2,23 +2,23 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+    // 1. Safe Mode: Kiểm tra Env Vars trước
+    // Nếu thiếu biến môi trường, log cảnh báo và cho qua (để không bị lỗi 500)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+        console.warn('⚠️ [Middleware] Missing Supabase Env Vars. Auth logic skipped.')
+        return NextResponse.next()
+    }
+
     try {
-        // 1. Tạo response khởi tạo
+        // 2. Tạo response khởi tạo
         let supabaseResponse = NextResponse.next({
             request,
         })
 
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-        if (!supabaseUrl || !supabaseAnonKey) {
-            console.error('⚠️ [Middleware] Missing Supabase Environment Variables!')
-            return NextResponse.next({
-                request,
-            })
-        }
-
-        // 2. Khởi tạo Supabase Client
+        // 3. Khởi tạo Supabase Client (Logic gộp từ lib/supabase/middleware cũ)
         const supabase = createServerClient(
             supabaseUrl,
             supabaseAnonKey,
@@ -42,16 +42,15 @@ export async function middleware(request: NextRequest) {
             }
         )
 
-        // 3. Refresh Session
+        // 4. Refresh Session (Quan trọng để giữ đăng nhập)
         await supabase.auth.getUser()
 
         return supabaseResponse
+
     } catch (e) {
-        // Catch all errors to prevent 500
-        console.error('⚠️ [Middleware] Error:', e)
-        return NextResponse.next({
-            request,
-        })
+        // Catch-all: Nếu có lỗi bất ngờ, log ra và vẫn cho user vào web
+        console.error('❌ [Middleware Error]', e)
+        return NextResponse.next()
     }
 }
 

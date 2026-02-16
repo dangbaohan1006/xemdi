@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 import { getLatestMovies } from '@/lib/api';
 import type { LatestMoviesResponse as MovieListResponse } from '@/lib/types';
 import MovieCard from '@/components/MovieCard';
@@ -8,6 +11,7 @@ export default async function HomePage() {
   let error = null;
 
   try {
+    console.log('[HomePage] Fetching latest movies...');
     const data = await getLatestMovies(1);
     movies = data.items || [];
   } catch (e) {
@@ -18,7 +22,6 @@ export default async function HomePage() {
   return (
     <div className="hero-gradient">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section */}
         <div className="mb-12 animate-fade-in">
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight">
             <span className="gradient-text">Phim Mới</span>{' '}
@@ -29,10 +32,8 @@ export default async function HomePage() {
           </p>
         </div>
 
-        {/* Continue Watching */}
         <ContinueWatching />
 
-        {/* Movie Grid */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
@@ -45,11 +46,7 @@ export default async function HomePage() {
 
           {error ? (
             <div className="glass rounded-2xl p-8 text-center">
-              <svg className="w-16 h-16 text-zinc-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-              </svg>
               <p className="text-zinc-400 text-lg">{error}</p>
-              <p className="text-zinc-600 text-sm mt-2">API có thể đang bảo trì.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 stagger-children">

@@ -175,6 +175,30 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
         );
     }
 
+    const [isHDR, setIsHDR] = useState(false);
+    const [toastMsg, setToastMsg] = useState<string | null>(null);
+    const toastTimeoutRef = useRef<NodeJS.Timeout>(null);
+
+    const toggleHDR = () => {
+        const newState = !isHDR;
+        setIsHDR(newState);
+
+        // Show toast
+        if (newState) {
+            setToastMsg('Đã bật chế độ HDR giả lập');
+        } else {
+            setToastMsg('Đã tắt chế độ HDR');
+        }
+
+        // Clear previous timeout
+        if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+
+        // Set new timeout
+        toastTimeoutRef.current = setTimeout(() => {
+            setToastMsg(null);
+        }, 2000);
+    };
+
     return (
         <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative group">
             <MediaPlayer
@@ -188,6 +212,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
                 crossOrigin
                 onError={(detail) => handleError(detail as MediaErrorDetail)}
                 className="w-full h-full"
+                style={isHDR ? { filter: 'contrast(1.1) saturate(1.2) brightness(1.05)' } : undefined}
             >
                 <MediaProvider />
 
@@ -198,6 +223,45 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
                         googleCastButton: null, // Hide Google Cast button
                     }}
                 />
+
+                {/* Custom HDR Button Overlay */}
+                <div className="absolute top-4 right-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button
+                        onClick={toggleHDR}
+                        className={`p-2.5 rounded-full backdrop-blur-md transition-all duration-200 ${isHDR
+                                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.3)]'
+                                : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white border border-white/10'
+                            }`}
+                        title={isHDR ? "Tắt HDR" : "Bật HDR giả lập"}
+                    >
+                        {/* Sparkles icon */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill={isHDR ? "currentColor" : "none"}
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                            <path d="M5 3v4" />
+                            <path d="M9 17v4" />
+                            <path d="M3 21h6" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Toast Notification */}
+                <div className={`absolute top-16 right-4 z-50 pointer-events-none transition-all duration-300 transform ${toastMsg ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
+                    }`}>
+                    <div className="bg-black/80 backdrop-blur-md text-white text-sm font-medium px-4 py-2 rounded-lg border border-white/10 shadow-xl flex items-center gap-2">
+                        <span className="text-yellow-400">✨</span>
+                        {toastMsg}
+                    </div>
+                </div>
 
                 {/* Logic ngầm - Watch history sync */}
                 <PlayerLogic

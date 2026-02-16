@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 }
 
-export default async function WatchPage({ params }: { params: { slug: string } }) {
+export default async function WatchPage({ params, searchParams }: Props) {
     // 1. Check Login ngay tại Server Page
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -36,9 +36,13 @@ export default async function WatchPage({ params }: { params: { slug: string } }
     }
 
     // 2. Logic lấy phim (giữ nguyên code cũ của bạn)
-    const data = await getMovieBySlug(params.slug);
+    const { slug } = await params;
+    const { ep } = await searchParams;
+    const data = await getMovieBySlug(slug);
 
-    // Find the current episode's m3u8 link
+    const { movie, episodes } = data;
+
+    // Find the current episode's m3u8 link;
     const selectedEpSlug = ep || episodes?.[0]?.server_data?.[0]?.slug || '';
     let currentLink = '';
     let currentEpName = '';

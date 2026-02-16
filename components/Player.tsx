@@ -3,18 +3,20 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
     MediaPlayer,
-    MediaOutlet,
-    MediaCommunitySkin,
+    MediaProvider,
     useMediaStore,
-    useMediaRemote
+    useMediaRemote,
+    type MediaPlayerInstance,
+    type MediaErrorDetail
 } from '@vidstack/react';
+import { DefaultVideoLayout, defaultLayoutIcons } from '@vidstack/react/player/layouts/default';
 import { createClient } from '@/lib/supabase/client';
 const supabase = createClient();
-import { AlertCircle, RefreshCw } from 'lucide-react'; // Icon cho đẹp
+import { AlertCircle, RefreshCw } from 'lucide-react';
 
-// Import CSS của Vidstack
-import 'vidstack/styles/defaults.css';
-import 'vidstack/styles/community-skin/video.css';
+// Import Vidstack v1.x CSS
+import '@vidstack/react/player/styles/default/theme.css';
+import '@vidstack/react/player/styles/default/layouts/video.css';
 
 interface PlayerProps {
     src: string;        // Link .m3u8 gốc
@@ -38,7 +40,7 @@ function PlayerLogic({
     movieSlug: string;
     episodeSlug?: string;
     title: string;
-    poster?: string
+    poster?: string;
 }) {
     // Hooks lấy trạng thái player
     const { currentTime, duration, canPlay, started } = useMediaStore();
@@ -80,7 +82,7 @@ function PlayerLogic({
                 if (data && data.progress > 5) { // Chỉ tua nếu đã xem quá 5 giây
                     remote.seek(data.progress);
                     hasRestoredRef.current = true;
-                    // console.log(`[NotFlix] Resumed at ${data.progress}s`);
+                    console.log(`[Player] Resumed at ${data.progress}s`);
                 }
             } catch (error) {
                 console.error('Error restoring history:', error);
@@ -132,6 +134,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
     const [isUsingProxy, setIsUsingProxy] = useState(false);
     const [hasError, setHasError] = useState(false);
     const [key, setKey] = useState(0); // Dùng để Force re-render player khi đổi source
+    const playerRef = useRef<MediaPlayerInstance>(null);
 
     // Reset state khi đổi tập phim
     useEffect(() => {
@@ -142,7 +145,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
     }, [src]);
 
     // Xử lý khi link .m3u8 lỗi (CORS hoặc 403)
-    const handleError = useCallback((detail: unknown) => {
+    const handleError = useCallback((detail: MediaErrorDetail) => {
         // Nếu đang dùng link gốc mà lỗi -> Chuyển sang Proxy
         if (!isUsingProxy) {
             console.warn('[Player] Direct stream failed, switching to Proxy...');
@@ -174,21 +177,29 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
 
     return (
         <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative group">
-
             <MediaPlayer
                 key={key} // Force reset khi đổi Url
+                ref={playerRef}
                 src={streamUrl}
                 title={title}
                 poster={poster}
-                aspectRatio={16 / 9}
-                crossorigin="" // Quan trọng cho CORS
-                onError={handleError}
+                aspectRatio="16/9"
+                load="eager"
+                crossOrigin
+                onError={(detail) => handleError(detail as MediaErrorDetail)}
                 className="w-full h-full"
             >
-                <MediaOutlet />
-                <MediaCommunitySkin />
+                <MediaProvider />
 
-                {/* Logic ngầm */}
+                <DefaultVideoLayout
+                    icons={defaultLayoutIcons}
+                    thumbnails={poster}
+                    slots={{
+                        googleCastButton: null, // Hide Google Cast button
+                    }}
+                />
+
+                {/* Logic ngầm - Watch history sync */}
                 <PlayerLogic
                     movieSlug={movieSlug}
                     episodeSlug={episodeSlug}

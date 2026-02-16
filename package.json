@@ -13,14 +13,14 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
-    "@vidstack/react": "^0.6.15",
-    "hls.js": "^1.6.15",
+    "@vidstack/react": "^1.12.0",
+    "hls.js": "^1.5.0",
     "lucide-react": "^0.475.0",
-    "maverick.js": "0.37.0",
+    "media-icons": "^1.1.0",
     "next": "^16.1.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "vidstack": "0.6.15"
+    "vidstack": "^1.12.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",

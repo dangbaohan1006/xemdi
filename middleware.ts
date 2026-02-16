@@ -2,23 +2,22 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-    // 1. Safe Mode: Kiểm tra Env Vars trước
-    // Nếu thiếu biến môi trường, log cảnh báo và cho qua (để không bị lỗi 500)
+    // 1. Tạo Response khởi tạo
+    let supabaseResponse = NextResponse.next({
+        request,
+    })
+
+    // 2. Kiểm tra biến môi trường (Safety check)
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     if (!supabaseUrl || !supabaseAnonKey) {
-        console.warn('⚠️ [Middleware] Missing Supabase Env Vars. Auth logic skipped.')
-        return NextResponse.next()
+        // Nếu thiếu Env Var, chỉ return response rỗng để web không sập
+        return supabaseResponse
     }
 
     try {
-        // 2. Tạo response khởi tạo
-        let supabaseResponse = NextResponse.next({
-            request,
-        })
-
-        // 3. Khởi tạo Supabase Client (Logic gộp từ lib/supabase/middleware cũ)
+        // 3. Khởi tạo Client với logic xử lý Cookie tối giản nhất
         const supabase = createServerClient(
             supabaseUrl,
             supabaseAnonKey,
@@ -28,12 +27,17 @@ export async function middleware(request: NextRequest) {
                         return request.cookies.getAll()
                     },
                     setAll(cookiesToSet) {
+                        // Cập nhật cookie vào Request (để Server Component đọc được ngay)
                         cookiesToSet.forEach(({ name, value, options }) =>
                             request.cookies.set(name, value)
                         )
+
+                        // Tạo lại Response để apply cookie mới
                         supabaseResponse = NextResponse.next({
                             request,
                         })
+
+                        // Cập nhật cookie vào Response (để Browser lưu lại)
                         cookiesToSet.forEach(({ name, value, options }) =>
                             supabaseResponse.cookies.set(name, value, options)
                         )
@@ -42,27 +46,24 @@ export async function middleware(request: NextRequest) {
             }
         )
 
-        // 4. Refresh Session (Quan trọng để giữ đăng nhập)
+        // 4. Quan trọng: Lấy User để refresh token
+        // Lưu ý: Dùng getUser() thay vì getSession() để bảo mật hơn
         await supabase.auth.getUser()
 
         return supabaseResponse
 
     } catch (e) {
-        // Catch-all: Nếu có lỗi bất ngờ, log ra và vẫn cho user vào web
-        console.error('❌ [Middleware Error]', e)
-        return NextResponse.next()
+        // Nếu có lỗi bất kỳ, return response gốc để người dùng vẫn vào được web
+        console.error('Middleware Error:', e)
+        return NextResponse.next({
+            request,
+        })
     }
 }
 
 export const config = {
     matcher: [
-        /*
-         * Match tất cả request paths ngoại trừ:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - Các file ảnh/tài nguyên tĩnh (svg, png, jpg...)
-         */
+        // Loại trừ các file tĩnh
         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 }

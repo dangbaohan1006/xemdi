@@ -23,6 +23,7 @@
     "vidstack": "0.6.15"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "19.0.8",

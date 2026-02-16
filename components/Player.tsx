@@ -6,8 +6,7 @@ import {
     MediaOutlet,
     MediaCommunitySkin,
     useMediaStore,
-    useMediaRemote,
-    MediaProviderAdapter
+    useMediaRemote
 } from '@vidstack/react';
 import { createClient } from '@/lib/supabase/client';
 const supabase = createClient();
@@ -175,6 +174,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
 
     return (
         <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative group">
+            {/* @ts-ignore - React 19 children type conflict with Vidstack v0.6 */}
             <MediaPlayer
                 key={key} // Force reset khi đổi Url
                 src={streamUrl}
@@ -185,7 +185,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
                 onError={handleError}
                 className="w-full h-full"
             >
-                <MediaOutlet className="w-full h-full" />
+                <MediaOutlet />
                 <MediaCommunitySkin />
 
                 {/* Logic ngầm */}

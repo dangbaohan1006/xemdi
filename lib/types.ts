@@ -56,9 +56,17 @@ export interface APIResponse {
   items: MovieSummary[];
 }
 
+export interface PaginationInfo {
+  totalItems: number;
+  totalItemsPerPage: number;
+  currentPage: number;
+  totalPages: number;
+}
+
 export interface LatestMoviesResponse {
   status: boolean;
   items: MovieSummary[];
+  pagination?: PaginationInfo;
 }
 
 export interface MovieDetailResponse {

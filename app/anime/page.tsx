@@ -3,16 +3,28 @@ export const runtime = 'nodejs';
 
 import { getAnimeList } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
+import Pagination from '@/components/Pagination';
 import { Sparkles } from 'lucide-react';
+import type { LatestMoviesResponse } from '@/lib/types';
 
-export default async function AnimePage() {
-    let animeList: any[] = [];
+interface AnimePageProps {
+    searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AnimePage({ searchParams }: AnimePageProps) {
+    const { page } = await searchParams;
+    const currentPage = parseInt(page || '1', 10);
+
+    let animeList: LatestMoviesResponse['items'] = [];
+    let pagination: LatestMoviesResponse['pagination'];
     let error = null;
 
     try {
-        console.log('[AnimePage] Fetching anime list...');
-        const data = await getAnimeList(1);
+        console.log(`[AnimePage] Fetching anime page ${currentPage}...`);
+        const data = await getAnimeList(currentPage);
         animeList = data.items || [];
+        pagination = data.pagination;
+        console.log(`[AnimePage] Loaded ${animeList.length} anime`, pagination);
     } catch (e) {
         error = (e as Error).message;
         console.error('[AnimePage] Error:', error);
@@ -46,6 +58,13 @@ export default async function AnimePage() {
                                 <MovieCard key={anime._id} movie={anime} />
                             ))}
                         </div>
+
+                        {pagination && (
+                            <Pagination
+                                currentPage={pagination.currentPage}
+                                totalPages={pagination.totalPages}
+                            />
+                        )}
                     </section>
                 )}
             </div>

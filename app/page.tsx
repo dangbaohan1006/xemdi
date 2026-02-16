@@ -16,12 +16,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const currentPage = parseInt(page || '1', 10);
 
   let movies: MovieListResponse['items'] = [];
+  let pagination: MovieListResponse['pagination'];
   let error = null;
 
   try {
     console.log(`[HomePage] Fetching page ${currentPage}...`);
     const data = await getLatestMovies(currentPage);
     movies = data.items || [];
+    pagination = data.pagination;
+    console.log(`[HomePage] Loaded ${movies.length} movies, pagination:`, pagination);
   } catch (e) {
     error = 'Không thể tải danh sách phim. Vui lòng thử lại sau.';
     console.error('Failed to fetch movies:', e);
@@ -64,7 +67,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
           )}
 
-          {!error && <Pagination currentPage={currentPage} totalPages={20} />}
+          {!error && pagination && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+            />
+          )}
         </section>
       </div>
     </div>

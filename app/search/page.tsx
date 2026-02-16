@@ -2,25 +2,30 @@ export const dynamic = 'force-dynamic';
 
 import { searchMovies } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
+import Pagination from '@/components/Pagination';
 import { Search } from 'lucide-react';
+import type { LatestMoviesResponse } from '@/lib/types';
 
 interface SearchPageProps {
-    searchParams: Promise<{ q?: string }>;
+    searchParams: Promise<{ q?: string; page?: string }>;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-    const { q } = await searchParams;
+    const { q, page } = await searchParams;
     const query = q || '';
+    const currentPage = parseInt(page || '1', 10);
 
-    let movies: any[] = [];
+    let movies: LatestMoviesResponse['items'] = [];
+    let pagination: LatestMoviesResponse['pagination'];
     let error = null;
 
     if (query.trim()) {
         try {
-            console.log(`[SearchPage] Searching for: "${query}"`);
-            const data = await searchMovies(query);
-            console.log(`[SearchPage] Results count: ${data.items?.length || 0}`);
+            console.log(`[SearchPage] Searching for: "${query}" (page ${currentPage})`);
+            const data = await searchMovies(query, currentPage);
             movies = data.items || [];
+            pagination = data.pagination;
+            console.log(`[SearchPage] Results count: ${movies.length}`, pagination);
         } catch (e) {
             error = (e as Error).message;
             console.error('[SearchPage] Error:', error);
@@ -66,6 +71,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                                 <MovieCard key={movie._id} movie={movie} />
                             ))}
                         </div>
+
+                        {pagination && (
+                            <Pagination
+                                currentPage={pagination.currentPage}
+                                totalPages={pagination.totalPages}
+                            />
+                        )}
                     </div>
                 )}
             </div>

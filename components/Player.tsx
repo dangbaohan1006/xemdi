@@ -174,7 +174,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
 
     return (
         <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative group">
-            {/* @ts-expect-error - React 19 children type conflict with Vidstack v0.6 */}
+
             <MediaPlayer
                 key={key} // Force reset khi đổi Url
                 src={streamUrl}

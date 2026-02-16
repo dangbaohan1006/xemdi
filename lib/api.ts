@@ -1,4 +1,4 @@
-import { LatestMoviesResponse as MovieListResponse, MovieDetailResponse, Episode as EpisodeServer } from './types';
+import { LatestMoviesResponse as MovieListResponse, MovieDetailResponse } from './types';
 
 const BASE_URL = 'https://phimapi.com';
 

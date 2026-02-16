@@ -10,7 +10,7 @@ import {
 } from '@vidstack/react';
 import { createClient } from '@/lib/supabase/client';
 const supabase = createClient();
-import { Play, AlertCircle, RefreshCw } from 'lucide-react'; // Icon cho đẹp
+import { AlertCircle, RefreshCw } from 'lucide-react'; // Icon cho đẹp
 
 // Import CSS của Vidstack
 import 'vidstack/styles/defaults.css';
@@ -41,7 +41,7 @@ function PlayerLogic({
     poster?: string
 }) {
     // Hooks lấy trạng thái player
-    const { currentTime, duration, paused, canPlay, started } = useMediaStore();
+    const { currentTime, duration, canPlay, started } = useMediaStore();
     // Hook điều khiển player (seek, play, pause)
     const remote = useMediaRemote();
 
@@ -142,7 +142,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
     }, [src]);
 
     // Xử lý khi link .m3u8 lỗi (CORS hoặc 403)
-    const handleError = useCallback((detail: any) => {
+    const handleError = useCallback((detail: unknown) => {
         // Nếu đang dùng link gốc mà lỗi -> Chuyển sang Proxy
         if (!isUsingProxy) {
             console.warn('[Player] Direct stream failed, switching to Proxy...');
@@ -174,7 +174,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
 
     return (
         <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative group">
-            {/* @ts-ignore - React 19 children type conflict with Vidstack v0.6 */}
+            {/* @ts-expect-error - React 19 children type conflict with Vidstack v0.6 */}
             <MediaPlayer
                 key={key} // Force reset khi đổi Url
                 src={streamUrl}

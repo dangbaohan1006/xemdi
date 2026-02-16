@@ -1,11 +1,11 @@
 import { getLatestMovies } from '@/lib/api';
+import type { LatestMoviesResponse as MovieListResponse } from '@/lib/types';
 import MovieCard from '@/components/MovieCard';
 import ContinueWatching from '@/components/ContinueWatching';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function HomePage() {
-  const supabase = await createClient();
-  let movies: any[] = [];
+  let movies: MovieListResponse['items'] = [];
   let error = null;
 
   try {
@@ -54,7 +54,7 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 stagger-children">
-              {movies.map((movie: any) => ( // Using any for now to match the existing mapped items structure which is a subset of Movie
+              {movies.map((movie) => (
                 <MovieCard key={movie._id} movie={movie} />
               ))}
             </div>

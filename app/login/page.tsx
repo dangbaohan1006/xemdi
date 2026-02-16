@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { createClient } from '@/lib/supabase/client';
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 const supabase = createClient();
 
@@ -13,12 +14,12 @@ export default function LoginPage() {
 
     useEffect(() => {
         // Redirect if already logged in
-        supabase.auth.getUser().then(({ data: { user } }: { data: { user: any } }) => {
+        supabase.auth.getUser().then(({ data: { user } }: { data: { user: User | null } }) => {
             if (user) router.push('/');
         });
 
         // Listen for auth state changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event: any, session: any) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
             if (event === 'SIGNED_IN' && session) {
                 router.push('/');
             }

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Player from '@/components/Player';
 import EpisodeSelector from '@/components/EpisodeSelector';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -168,11 +169,13 @@ export default async function WatchPage({ params, searchParams }: Props) {
                 {/* Sidebar Info */}
                 <div className="space-y-4">
                     {/* Poster */}
-                    <div className="hidden lg:block rounded-xl overflow-hidden">
-                        <img
+                    <div className="hidden lg:block rounded-xl overflow-hidden relative aspect-[2/3]">
+                        <Image
                             src={posterUrl}
                             alt={movie.name}
-                            className="w-full object-cover rounded-xl"
+                            fill
+                            className="object-cover rounded-xl"
+                            sizes="(max-width: 1024px) 0px, 300px"
                         />
                     </div>
 

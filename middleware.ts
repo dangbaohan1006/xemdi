@@ -7,11 +7,22 @@ export async function middleware(request: NextRequest) {
         request,
     })
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+        console.error('⚠️ [Middleware] Missing Supabase Environment Variables!')
+        // Tránh crash nếu thiếu biến môi trường, chỉ log và bỏ qua logic auth
+        return NextResponse.next({
+            request,
+        })
+    }
+
     // 2. Khởi tạo Supabase Client ngay trong Middleware
     // Lưu ý: Không import từ file bên ngoài để tránh lỗi "unsupported modules" trên Edge
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        supabaseUrl,
+        supabaseAnonKey,
         {
             cookies: {
                 getAll() {

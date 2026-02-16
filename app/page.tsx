@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 import { getLatestMovies } from '@/lib/api';
-import type { LatestMoviesResponse as MovieListResponse } from '@/lib/types';
+import type { MovieListResponse } from '@/lib/types';
 import MovieCard from '@/components/MovieCard';
 import ContinueWatching from '@/components/ContinueWatching';
 import Pagination from '@/components/Pagination';

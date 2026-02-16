@@ -5,7 +5,7 @@ import { getAnimeList } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
 import { Sparkles } from 'lucide-react';
-import type { LatestMoviesResponse } from '@/lib/types';
+import type { MovieListResponse } from '@/lib/types';
 
 interface AnimePageProps {
     searchParams: Promise<{ page?: string }>;
@@ -15,8 +15,8 @@ export default async function AnimePage({ searchParams }: AnimePageProps) {
     const { page } = await searchParams;
     const currentPage = parseInt(page || '1', 10);
 
-    let animeList: LatestMoviesResponse['items'] = [];
-    let pagination: LatestMoviesResponse['pagination'];
+    let animeList: MovieListResponse['items'] = [];
+    let pagination: MovieListResponse['pagination'];
     let error = null;
 
     try {

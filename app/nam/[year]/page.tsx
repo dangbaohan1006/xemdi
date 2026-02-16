@@ -4,7 +4,7 @@ import { getMoviesByYear } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
 import { Calendar } from 'lucide-react';
-import type { LatestMoviesResponse } from '@/lib/types';
+import type { MovieListResponse } from '@/lib/types';
 
 interface YearPageProps {
     params: Promise<{ year: string }>;
@@ -17,8 +17,8 @@ export default async function YearPage({ params, searchParams }: YearPageProps) 
     const currentPage = parseInt(page || '1', 10);
     const yearNum = parseInt(year, 10);
 
-    let movies: LatestMoviesResponse['items'] = [];
-    let pagination: LatestMoviesResponse['pagination'];
+    let movies: MovieListResponse['items'] = [];
+    let pagination: MovieListResponse['pagination'];
     let error = null;
 
     try {

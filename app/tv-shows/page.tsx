@@ -4,7 +4,7 @@ import { getTvShows } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
 import { Tv } from 'lucide-react';
-import type { LatestMoviesResponse } from '@/lib/types';
+import type { MovieListResponse } from '@/lib/types';
 
 interface TvShowsPageProps {
     searchParams: Promise<{ page?: string }>;
@@ -14,8 +14,8 @@ export default async function TvShowsPage({ searchParams }: TvShowsPageProps) {
     const { page } = await searchParams;
     const currentPage = parseInt(page || '1', 10);
 
-    let tvShows: LatestMoviesResponse['items'] = [];
-    let pagination: LatestMoviesResponse['pagination'];
+    let tvShows: MovieListResponse['items'] = [];
+    let pagination: MovieListResponse['pagination'];
     let error = null;
 
     try {

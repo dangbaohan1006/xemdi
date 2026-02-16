@@ -4,7 +4,7 @@ import { searchMovies } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
 import { Search } from 'lucide-react';
-import type { LatestMoviesResponse } from '@/lib/types';
+import type { MovieListResponse } from '@/lib/types';
 
 interface SearchPageProps {
     searchParams: Promise<{ q?: string; page?: string }>;
@@ -15,8 +15,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     const query = q || '';
     const currentPage = parseInt(page || '1', 10);
 
-    let movies: LatestMoviesResponse['items'] = [];
-    let pagination: LatestMoviesResponse['pagination'];
+    let movies: MovieListResponse['items'] = [];
+    let pagination: MovieListResponse['pagination'];
     let error = null;
 
     if (query.trim()) {

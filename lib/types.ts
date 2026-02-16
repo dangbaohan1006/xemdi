@@ -63,7 +63,7 @@ export interface PaginationInfo {
   totalPages: number;
 }
 
-export interface LatestMoviesResponse {
+export interface MovieListResponse {
   status: boolean;
   items: MovieSummary[];
   pagination?: PaginationInfo;

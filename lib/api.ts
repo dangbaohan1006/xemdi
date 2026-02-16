@@ -1,4 +1,4 @@
-﻿import { LatestMoviesResponse as MovieListResponse, MovieDetailResponse, MovieSummary, AnimeListResponse } from './types';
+﻿import { MovieListResponse, MovieDetailResponse, MovieSummary, AnimeListResponse } from './types';
 
 const BASE_URL = 'https://phimapi.com';
 const NGUONC_URL = 'https://phim.nguonc.com/api';

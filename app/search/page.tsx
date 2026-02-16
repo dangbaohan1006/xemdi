@@ -17,7 +17,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     if (query.trim()) {
         try {
+            console.log(`[SearchPage] Searching for: "${query}"`);
             const data = await searchMovies(query);
+            console.log(`[SearchPage] Results count: ${data.items?.length || 0}`);
             movies = data.items || [];
         } catch (e) {
             error = (e as Error).message;

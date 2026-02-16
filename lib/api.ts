@@ -28,15 +28,31 @@ export async function getMovieBySlug(slug: string): Promise<MovieDetailResponse>
 }
 
 export async function searchMovies(keyword: string, page: number = 1): Promise<MovieListResponse> {
-    const res = await fetch(`${BASE_URL}/v1/api/tim-kiem?keyword=${encodeURIComponent(keyword)}&page=${page}`, {
-        next: { revalidate: 60 },
-    });
+    try {
+        const res = await fetch(`${BASE_URL}/v1/api/tim-kiem?keyword=${encodeURIComponent(keyword)}&limit=20`, {
+            next: { revalidate: 60 },
+        });
 
-    if (!res.ok) {
-        throw new Error(`Failed to search movies: ${res.status}`);
+        if (!res.ok) {
+            console.error(`[searchMovies] HTTP ${res.status}`);
+            return { status: false, items: [] };
+        }
+
+        const data = await res.json();
+        console.log('[searchMovies] Raw API response:', JSON.stringify(data).substring(0, 200));
+
+        // KKPhim search API returns nested structure: { status: true, data: { items: [...] } }
+        // OR sometimes: { status: true, data: { data: { items: [...] } } }
+        const items = data?.data?.items || data?.data?.data?.items || data?.items || [];
+
+        return {
+            status: data.status || false,
+            items: items,
+        };
+    } catch (error) {
+        console.error('[searchMovies] Error:', error);
+        return { status: false, items: [] };
     }
-
-    return res.json();
 }
 
 // ========== ANIME SOURCE (NguonC) ==========

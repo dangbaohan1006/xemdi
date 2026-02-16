@@ -5,14 +5,22 @@ import { getLatestMovies } from '@/lib/api';
 import type { LatestMoviesResponse as MovieListResponse } from '@/lib/types';
 import MovieCard from '@/components/MovieCard';
 import ContinueWatching from '@/components/ContinueWatching';
+import Pagination from '@/components/Pagination';
 
-export default async function HomePage() {
+interface HomePageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const { page } = await searchParams;
+  const currentPage = parseInt(page || '1', 10);
+
   let movies: MovieListResponse['items'] = [];
   let error = null;
 
   try {
-    console.log('[HomePage] Fetching latest movies...');
-    const data = await getLatestMovies(1);
+    console.log(`[HomePage] Fetching page ${currentPage}...`);
+    const data = await getLatestMovies(currentPage);
     movies = data.items || [];
   } catch (e) {
     error = 'Không thể tải danh sách phim. Vui lòng thử lại sau.';
@@ -55,6 +63,8 @@ export default async function HomePage() {
               ))}
             </div>
           )}
+
+          {!error && <Pagination currentPage={currentPage} totalPages={20} />}
         </section>
       </div>
     </div>

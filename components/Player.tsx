@@ -185,7 +185,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
 
         // Show toast
         if (newState) {
-            setToastMsg('Đã bật chế độ HDR giả lập');
+            setToastMsg('Đã bật HDR + Sharpen');
         } else {
             setToastMsg('Đã tắt chế độ HDR');
         }
@@ -212,7 +212,7 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
                 crossOrigin
                 onError={(detail) => handleError(detail as MediaErrorDetail)}
                 className="w-full h-full"
-                style={isHDR ? { filter: 'contrast(1.1) saturate(1.2) brightness(1.05)' } : undefined}
+                style={isHDR ? { filter: 'url(#sharp-hdr) contrast(1.1)' } : undefined}
             >
                 <MediaProvider />
 
@@ -224,15 +224,28 @@ export default function Player({ src, title, poster, movieSlug, episodeSlug }: P
                     }}
                 />
 
+                {/* Inject SVG Sharpening Filter */}
+                <svg width="0" height="0" style={{ position: 'absolute' }}>
+                    <filter id="sharp-hdr">
+                        <feColorMatrix type="saturate" values="1.3" />
+                        <feComponentTransfer>
+                            <feFuncR type="linear" slope="1.1" intercept="-0.05" />
+                            <feFuncG type="linear" slope="1.1" intercept="-0.05" />
+                            <feFuncB type="linear" slope="1.1" intercept="-0.05" />
+                        </feComponentTransfer>
+                        <feConvolveMatrix order="3" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0" preserveAlpha="true" />
+                    </filter>
+                </svg>
+
                 {/* Custom HDR Button Overlay */}
                 <div className="absolute top-4 right-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button
                         onClick={toggleHDR}
                         className={`p-2.5 rounded-full backdrop-blur-md transition-all duration-200 ${isHDR
-                                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.3)]'
-                                : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white border border-white/10'
+                            ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                            : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white border border-white/10'
                             }`}
-                        title={isHDR ? "Tắt HDR" : "Bật HDR giả lập"}
+                        title={isHDR ? "Tắt HDR + Sharpen" : "Bật HDR + Sharpen"}
                     >
                         {/* Sparkles icon */}
                         <svg

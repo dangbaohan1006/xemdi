@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function SearchInput() {
+export default function SearchInput({ placeholder }: { placeholder?: string }) {
     const [query, setQuery] = useState('');
     const router = useRouter();
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -43,7 +43,7 @@ export default function SearchInput() {
             <div className="relative">
                 <input
                     type="text"
-                    placeholder="Tìm phim..."
+                    placeholder={placeholder}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="w-full sm:w-64 px-4 py-2 pl-10 bg-zinc-800/80 border border-zinc-700 rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"

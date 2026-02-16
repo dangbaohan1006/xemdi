@@ -4,6 +4,8 @@ import Player from '@/components/Player';
 import EpisodeSelector from '@/components/EpisodeSelector';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -23,23 +25,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 }
 
-export default async function WatchPage({ params, searchParams }: Props) {
-    const { slug } = await params;
-    const { ep } = await searchParams;
+export default async function WatchPage({ params }: { params: { slug: string } }) {
+    // 1. Check Login ngay tại Server Page
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    let data;
-    try {
-        data = await getMovieBySlug(slug);
-    } catch (e) {
-        console.error('Failed to fetch movie:', e);
-        notFound();
+    // Nếu chưa đăng nhập -> Đá về trang login
+    if (!user) {
+        redirect('/login');
     }
 
-    if (!data?.movie) {
-        notFound();
-    }
-
-    const { movie, episodes } = data;
+    // 2. Logic lấy phim (giữ nguyên code cũ của bạn)
+    const data = await getMovieDetail(params.slug);
 
     // Find the current episode's m3u8 link
     const selectedEpSlug = ep || episodes?.[0]?.server_data?.[0]?.slug || '';

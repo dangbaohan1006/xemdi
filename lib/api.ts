@@ -1,4 +1,4 @@
-import { LatestMoviesResponse as MovieListResponse, MovieDetailResponse, MovieSummary, AnimeListResponse } from './types';
+﻿import { LatestMoviesResponse as MovieListResponse, MovieDetailResponse, MovieSummary, AnimeListResponse } from './types';
 
 const BASE_URL = 'https://phimapi.com';
 const NGUONC_URL = 'https://phim.nguonc.com/api';
@@ -6,7 +6,7 @@ const NGUONC_URL = 'https://phim.nguonc.com/api';
 export async function getLatestMovies(page: number = 1): Promise<MovieListResponse> {
     try {
         const res = await fetch(`${BASE_URL}/danh-sach/phim-moi-cap-nhat?page=${page}&limit=10`, {
-            next: { revalidate: 300 }, // Cache for 5 minutes
+            next: { revalidate: 300 },
         });
 
         if (!res.ok) {
@@ -15,8 +15,6 @@ export async function getLatestMovies(page: number = 1): Promise<MovieListRespon
         }
 
         const data = await res.json();
-
-        // Extract pagination from KKPhim API: data.params.pagination
         const paginationData = data?.params?.pagination;
 
         return {
@@ -37,7 +35,7 @@ export async function getLatestMovies(page: number = 1): Promise<MovieListRespon
 
 export async function getMovieBySlug(slug: string): Promise<MovieDetailResponse> {
     const res = await fetch(`${BASE_URL}/phim/${slug}`, {
-        next: { revalidate: 3600 }, // Cache for 1 hour
+        next: { revalidate: 3600 },
     });
 
     if (!res.ok) {
@@ -59,9 +57,6 @@ export async function searchMovies(keyword: string, page: number = 1): Promise<M
         }
 
         const data = await res.json();
-        console.log('[searchMovies] Raw API response:', JSON.stringify(data).substring(0, 200));
-
-        // KKPhim search API returns nested structure: { status: true, data: { items: [...], params: { pagination: {...} } } }
         const items = data?.data?.items || data?.data?.data?.items || data?.items || [];
         const paginationData = data?.data?.params?.pagination || data?.params?.pagination;
 
@@ -81,18 +76,13 @@ export async function searchMovies(keyword: string, page: number = 1): Promise<M
     }
 }
 
-// ========== ANIME SOURCE (NguonC) ==========
-
-/**
- * Normalize NguonC movie data to match our unified MovieSummary interface
- */
 function normalizeNguonCMovie(nguoncMovie: any): MovieSummary {
     return {
         _id: nguoncMovie._id || nguoncMovie.id || '',
         name: nguoncMovie.name || '',
         slug: nguoncMovie.slug || '',
         origin_name: nguoncMovie.origin_name || nguoncMovie.original_name || '',
-        poster_url: nguoncMovie.thumb_url || nguoncMovie.poster_url || '', // NguonC uses thumb_url
+        poster_url: nguoncMovie.thumb_url || nguoncMovie.poster_url || '',
         thumb_url: nguoncMovie.thumb_url || nguoncMovie.poster_url || '',
         year: nguoncMovie.year || new Date().getFullYear(),
     };
@@ -101,7 +91,7 @@ function normalizeNguonCMovie(nguoncMovie: any): MovieSummary {
 export async function getAnimeList(page: number = 1): Promise<MovieListResponse> {
     try {
         const res = await fetch(`${NGUONC_URL}/films/the-loai/hoat-hinh?page=${page}`, {
-            next: { revalidate: 300 }, // Cache for 5 minutes
+            next: { revalidate: 300 },
         });
 
         if (!res.ok) {
@@ -111,7 +101,6 @@ export async function getAnimeList(page: number = 1): Promise<MovieListResponse>
 
         const data: AnimeListResponse = await res.json();
 
-        // Normalize NguonC data to match our structure
         return {
             status: data.status === 'success',
             items: (data.items || []).map(normalizeNguonCMovie),
@@ -127,3 +116,128 @@ export async function getAnimeList(page: number = 1): Promise<MovieListResponse>
         return { status: false, items: [] };
     }
 }
+
+export async function getTvShows(page: number = 1): Promise<MovieListResponse> {
+    try {
+        const res = await fetch(`${BASE_URL}/v1/api/danh-sach/tv-shows?page=${page}&limit=18`, {
+            next: { revalidate: 300 },
+        });
+
+        if (!res.ok) {
+            console.error(`[getTvShows] HTTP ${res.status}`);
+            return { status: false, items: [] };
+        }
+
+        const data = await res.json();
+        const paginationData = data?.params?.pagination;
+
+        return {
+            status: data.status || false,
+            items: data.items || [],
+            pagination: paginationData ? {
+                currentPage: paginationData.currentPage || page,
+                totalPages: paginationData.totalPages || 1,
+                totalItems: paginationData.totalItems || 0,
+                totalItemsPerPage: 18
+            } : undefined
+        };
+    } catch (error) {
+        console.error('[getTvShows] Error:', error);
+        return { status: false, items: [] };
+    }
+}
+
+export async function getCinemaMovies(page: number = 1): Promise<MovieListResponse> {
+    try {
+        const res = await fetch(`${BASE_URL}/v1/api/danh-sach/phim-chieu-rap?page=${page}&limit=18`, {
+            next: { revalidate: 300 },
+        });
+
+        if (!res.ok) {
+            console.error(`[getCinemaMovies] HTTP ${res.status}`);
+            return { status: false, items: [] };
+        }
+
+        const data = await res.json();
+        const paginationData = data?.params?.pagination;
+
+        return {
+            status: data.status || false,
+            items: data.items || [],
+            pagination: paginationData ? {
+                currentPage: paginationData.currentPage || page,
+                totalPages: paginationData.totalPages || 1,
+                totalItems: paginationData.totalItems || 0,
+                totalItemsPerPage: 18
+            } : undefined
+        };
+    } catch (error) {
+        console.error('[getCinemaMovies] Error:', error);
+        return { status: false, items: [] };
+    }
+}
+
+export async function getMoviesByYear(year: number, page: number = 1): Promise<MovieListResponse> {
+    try {
+        const res = await fetch(`${BASE_URL}/v1/api/nam/${year}?page=${page}&limit=18`, {
+            next: { revalidate: 300 },
+        });
+
+        if (!res.ok) {
+            console.error(`[getMoviesByYear] HTTP ${res.status}`);
+            return { status: false, items: [] };
+        }
+
+        const data = await res.json();
+        const paginationData = data?.params?.pagination;
+
+        return {
+            status: data.status || false,
+            items: data.items || [],
+            pagination: paginationData ? {
+                currentPage: paginationData.currentPage || page,
+                totalPages: paginationData.totalPages || 1,
+                totalItems: paginationData.totalItems || 0,
+                totalItemsPerPage: 18
+            } : undefined
+        };
+    } catch (error) {
+        console.error('[getMoviesByYear] Error:', error);
+        return { status: false, items: [] };
+    }
+}
+
+export const GENRES = [
+    { name: 'Hanh Dong', slug: 'hanh-dong' },
+    { name: 'Tinh Cam', slug: 'tinh-cam' },
+    { name: 'Hai Huoc', slug: 'hai-huoc' },
+    { name: 'Co Trang', slug: 'co-trang' },
+    { name: 'Tam Ly', slug: 'tam-ly' },
+    { name: 'Hinh Su', slug: 'hinh-su' },
+    { name: 'Chien Tranh', slug: 'chien-tranh' },
+    { name: 'The Thao', slug: 'the-thao' },
+    { name: 'Vo Thuat', slug: 'vo-thuat' },
+    { name: 'Vien Tuong', slug: 'vien-tuong' },
+    { name: 'Phieu Luu', slug: 'phieu-luu' },
+    { name: 'Khoa Hoc', slug: 'khoa-hoc' },
+    { name: 'Kinh Di', slug: 'kinh-di' },
+    { name: 'Am Nhac', slug: 'am-nhac' },
+    { name: 'Gia Dinh', slug: 'gia-dinh' },
+    { name: 'Hoc Duong', slug: 'hoc-duong' },
+];
+
+export const COUNTRIES = [
+    { name: 'Au My', slug: 'au-my' },
+    { name: 'Han Quoc', slug: 'han-quoc' },
+    { name: 'Trung Quoc', slug: 'trung-quoc' },
+    { name: 'Nhat Ban', slug: 'nhat-ban' },
+    { name: 'Thai Lan', slug: 'thai-lan' },
+    { name: 'Viet Nam', slug: 'viet-nam' },
+    { name: 'An Do', slug: 'an-do' },
+    { name: 'Anh', slug: 'anh' },
+];
+
+export const YEARS = Array.from(
+    { length: new Date().getFullYear() - 2009 },
+    (_, i) => new Date().getFullYear() - i
+);

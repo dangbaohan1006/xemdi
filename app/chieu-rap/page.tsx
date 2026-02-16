@@ -1,0 +1,70 @@
+export const dynamic = 'force-dynamic';
+
+import { getCinemaMovies } from '@/lib/api';
+import MovieCard from '@/components/MovieCard';
+import Pagination from '@/components/Pagination';
+import { Film } from 'lucide-react';
+import type { LatestMoviesResponse } from '@/lib/types';
+
+interface CinemaPageProps {
+    searchParams: Promise<{ page?: string }>;
+}
+
+export default async function CinemaPage({ searchParams }: CinemaPageProps) {
+    const { page } = await searchParams;
+    const currentPage = parseInt(page || '1', 10);
+
+    let movies: LatestMoviesResponse['items'] = [];
+    let pagination: LatestMoviesResponse['pagination'];
+    let error = null;
+
+    try {
+        console.log(`[CinemaPage] Fetching page ${currentPage}...`);
+        const data = await getCinemaMovies(currentPage);
+        movies = data.items || [];
+        pagination = data.pagination;
+        console.log(`[CinemaPage] Loaded ${movies.length} cinema movies`, pagination);
+    } catch (e) {
+        error = (e as Error).message;
+        console.error('[CinemaPage] Error:', error);
+    }
+
+    return (
+        <div className="hero-gradient min-h-screen">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="mb-8 animate-fade-in">
+                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+                        <Film className="w-8 h-8 text-red-500" />
+                        <span className="gradient-text">Phim Chiếu Rạp</span>
+                    </h1>
+                    <p className="text-zinc-400 mt-2">Những bộ phim đang chiếu rạp hot nhất</p>
+                </div>
+
+                {error ? (
+                    <div className="glass rounded-2xl p-12 text-center">
+                        <p className="text-red-400 text-lg">Lỗi: {error}</p>
+                    </div>
+                ) : movies.length === 0 ? (
+                    <div className="glass rounded-2xl p-12 text-center">
+                        <p className="text-zinc-400 text-lg">Không có phim chiếu rạp nào</p>
+                    </div>
+                ) : (
+                    <div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            {movies.map((movie) => (
+                                <MovieCard key={movie._id} movie={movie} />
+                            ))}
+                        </div>
+
+                        {pagination && (
+                            <Pagination
+                                currentPage={pagination.currentPage}
+                                totalPages={pagination.totalPages}
+                            />
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

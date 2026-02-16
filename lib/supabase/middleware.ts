@@ -15,7 +15,7 @@ export async function updateSession(request: NextRequest) {
                     return request.cookies.getAll()
                 },
                 setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-                    cookiesToSet.forEach(({ name, value, options: _options }: { name: string; value: string; options: CookieOptions }) => {
+                    cookiesToSet.forEach(({ name, value }) => {
                         request.cookies.set(name, value)
                     })
 
@@ -23,8 +23,8 @@ export async function updateSession(request: NextRequest) {
                         request,
                     })
 
-                    cookiesToSet.forEach(({ name, value, options: _options }: { name: string; value: string; options: CookieOptions }) =>
-                        supabaseResponse.cookies.set(name, value, _options)
+                    cookiesToSet.forEach(({ name, value, options }) =>
+                        supabaseResponse.cookies.set(name, value, options)
                     )
                 },
             },

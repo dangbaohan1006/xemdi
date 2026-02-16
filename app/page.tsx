@@ -2,7 +2,6 @@ import { getLatestMovies } from '@/lib/api';
 import type { LatestMoviesResponse as MovieListResponse } from '@/lib/types';
 import MovieCard from '@/components/MovieCard';
 import ContinueWatching from '@/components/ContinueWatching';
-import { createClient } from '@/lib/supabase/server';
 
 export default async function HomePage() {
   let movies: MovieListResponse['items'] = [];

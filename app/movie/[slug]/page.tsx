@@ -36,7 +36,7 @@ export default async function WatchPage({ params }: { params: { slug: string } }
     }
 
     // 2. Logic lấy phim (giữ nguyên code cũ của bạn)
-    const data = await getMovieDetail(params.slug);
+    const data = await getMovieBySlug(params.slug);
 
     // Find the current episode's m3u8 link
     const selectedEpSlug = ep || episodes?.[0]?.server_data?.[0]?.slug || '';
